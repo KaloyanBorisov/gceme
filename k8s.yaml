@@ -1,0 +1,40 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "gceme"
+  namespace: "default"
+  labels:
+    app: "gceme"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "gceme"
+  template:
+    metadata:
+      labels:
+        app: "gceme"
+    spec:
+      containers:
+        - name: "gceme-1"
+          image: "gcr.io/crack-node-287504/gceme:1"
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "gceme-hpa-koko"
+  namespace: "default"
+  labels:
+    app: "gceme"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "gceme"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 1
+  metrics:
+    - type: "Resource"
+      resource:
+        name: "cpu"
+        targetAverageUtilization: 80
